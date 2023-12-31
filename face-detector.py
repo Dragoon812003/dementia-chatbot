@@ -5,6 +5,7 @@ import msvcrt
 face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')  
   
 cap = cv2.VideoCapture(0) 
+
 count = 0
 del_count = 0
 last_del = 0
