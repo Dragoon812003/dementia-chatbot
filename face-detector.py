@@ -1,6 +1,7 @@
 import cv2  
 import os
 import msvcrt
+import sched, time
   
 face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')  
   
@@ -16,9 +17,11 @@ for file_name in os.listdir(dir_path):
     if os.path.isfile(os.path.join(dir_path, file_name)):
         os.remove(os.path.join(dir_path, file_name))
   
-while True:  
+def loop():  
   
     ret, img = cap.read()  
+
+    global count, del_count, last_del, img_format
   
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) 
     faces = face_cascade.detectMultiScale(gray, 1.3, 5) 
@@ -45,7 +48,15 @@ while True:
     if msvcrt.kbhit():
         key = msvcrt.getch()
         if key == b'q':
-            break
+            return
+        
+scheduler = sched.scheduler(time.time, time.sleep)
+def run_loop():
+    scheduler.enter(0.5, 1, run_loop)
+    loop()
+
+run_loop()
+scheduler.run()
         
 cap.release() 
 cv2.destroyAllWindows() 
