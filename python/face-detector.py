@@ -18,7 +18,9 @@ for file_name in os.listdir(dir_path):
         os.remove(os.path.join(dir_path, file_name))
   
 def loop():  
-  
+    
+    print("runing")
+
     ret, img = cap.read()  
 
     global count, del_count, last_del, img_format
