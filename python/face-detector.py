@@ -2,24 +2,18 @@ import cv2
 import os
 import msvcrt
 import sched, time
+import requests
   
 face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')  
   
 cap = cv2.VideoCapture(0) 
 
-count = 0
-del_count = 0
-last_del = 0
 img_format = ".jpg"
-
-dir_path = "images/"
-for file_name in os.listdir(dir_path):
-    if os.path.isfile(os.path.join(dir_path, file_name)):
-        os.remove(os.path.join(dir_path, file_name))
+upload_url = "http://host:port/endpoint"
+upload_interval = 30
+last_img_upload_time = -upload_interval
   
 def loop():  
-    
-    print("runing")
 
     ret, img = cap.read()  
 
@@ -29,23 +23,12 @@ def loop():
     faces = face_cascade.detectMultiScale(gray, 1.3, 5) 
   
     if len(faces) != 0:
-        cv2.imwrite(f"images/faces{count}{img_format}", img)
-        count += 1
-
-        if count - last_del > 100:
-            for i in range(last_del, count - 10):
-                file_path = f"images/faces{i}{img_format}"
-                os.remove(file_path)
-
-            last_del = count - 10
-
-            if count > 64000:
-                for file_name in os.listdir(dir_path):
-                    if os.path.isfile(os.path.join(dir_path, file_name)):
-                        os.remove(os.path.join(dir_path, file_name))
-
-                count = 0
-                last_del = 0
+        if time.time() - last_img_upload_time >= upload_interval:
+            _, img_encoded = cv2.imencode(img_format, img)
+            image_data = img_encoded.tostring()
+            image = {'image': (f'image{img_format}', image_data, 'image/jpeg')}
+            response = requests.post(upload_url, files=image)
+            last_img_upload_time = time.time()
         
     if msvcrt.kbhit():
         key = msvcrt.getch()
