@@ -8,8 +8,8 @@ export async function POST(request) {
         const data = await request.json();
         await connectToMongo();
         await Profile.create(data);
-        return NextResponse.json({message: "Profile Created"}, {status: 201});
+        return NextResponse.json({message: "Profile Created"}, {success: true}, {status: 201});
     } catch (error) {
-        return NextResponse.json({message: `${error} :  Profile not inserted.`}, {status: 500});
+        return NextResponse.json({message: `${error} :  Profile not inserted.`}, {success: false}, {status: 500});
     }
 }
