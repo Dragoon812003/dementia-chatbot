@@ -1,5 +1,4 @@
-import { Schema } from "mongoose";
-import mongoose from "mongoose";
+import mongoose, { Schema } from "mongoose";
 
 const imageSchema = new Schema(
     {
@@ -14,7 +13,7 @@ const imageSchema = new Schema(
         }
     },
     {
-        timestamps:true
+        timestamps:true,
     }
 );
 
